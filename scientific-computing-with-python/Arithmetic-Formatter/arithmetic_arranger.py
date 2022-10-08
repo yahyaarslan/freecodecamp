@@ -80,7 +80,7 @@ def arithmetic_arranger(input):
         print(temp)
         for index in range(0, temp, 1):
             print(" ", end = '')
-    print("test")
+    print("test") 
 
 
 def error_handler(desription):
