@@ -1,89 +1,77 @@
-def arithmetic_arranger(input):
+def arithmetic_arranger(problems, showAnswer=False):
+    # Allow only five problems.
+    if len(problems) > 5:
+        return "Error: Too many problems."
 
-    length = len(input)
-    # No more than 5 problems.
-    if length > 5:
-        error_handler("Error: Too many problems.")
-
-    # Addition and substractions only.
-    # Max of four digits.
-    add_or_sub = []
-    for index in range(0, length, 1):
-        if (input[index].find('+')) >= 1:
-            #print("Addition for: ", input[index])
-            add_or_sub.append(0)
-        elif (input[index].find('-')) >= 1:
-            #print ("Subtraction for: ", input[index])
-            add_or_sub.append(1)
-        else:
-            print(input[index])
-            error_handler("Error: Operator must be '+' or '-'.")
-    #print("List:", add_or_sub)
-
-    # Only contain digits.
-    temp = []
-    for index in range(0, length, 1):
-        if add_or_sub[index] == 0: # addition.
-            temp = input[index].split('+')
-            for index in range(0, len(temp), 1):
-                try:
-                    float(temp[index])
-                except:
-                    error_handler("Error: Numbers must only contain digits.")
-                if len(temp[index]) > 4:
-                    error_handler("Error: Numbers cannot be more than four digits.")
-
-        if add_or_sub[index] == 1: # subtraction.
-            temp = input[index].split('-')
-            for index in range(0, len(temp), 1):
-                try:
-                    float(temp[index])
-                except:
-                    error_handler("Error: Numbers must only contain digits.")
-                if len(temp[index]) > 4:
-                    error_handler("Error: Numbers cannot be more than four digits.")
-
-    
-    # Return
-    print(input)
-    temp = []
+    # Initialize the output.
     upper = []
     lower = []
-    lengths = []
-    for index in range(0, length, 1):
-        temp = input[index]
-        if add_or_sub[index] == 0:
-            temp = temp.split('+')
-            upper.append(temp[0])
-            lower.append(temp[1])
-            lengths.append(len(upper))
-            lengths.append(len(lower))
-        elif add_or_sub[index] == 1:
-            temp = temp.split('-')
-            upper.append(temp[0])
-            lower.append(temp[1])
-            lengths.append(len(upper))
-            lengths.append(len(lower))
-        #test = float(input[index])
-        #print("Test", [index], test)
-    print("Lengths:", lengths)
-    print("Upper:", upper)
-    print("Lower: ", lower)
-   #print("Result:", input)
+    operator = []
 
-    temp = 0
-    for index in range(0, length, 1):
-        if len(upper[index]) > len(lower[index]):
-            temp = len(upper[index])
+    for problem in problems:
+        temp = problem.split()
+        upper.append(temp[0])
+        operator.append(temp[1])
+        lower.append(temp[2])
+
+    # Define range.
+    range_ = range(len(upper))
+
+    # Allow only addition and subtraction.
+    if "*" in operator or "/" in operator:
+        return "Error: Operator must be '+' or '-'."
+    if "+" not in operator or "-" not in operator:
+        return "Error: Operator must be '+' or '-'."
+
+    # Allow only digits
+    for i in range_:
+        if not (upper[i].isdigit() and lower[i].isdigit()):
+            return "Error: Numbers must only contain digits."
+
+    # Allow only four digits.
+    for i in range_:
+        if len(upper[i]) > 4 or len(lower[i]) > 4:
+            return "Error: Numbers cannot be more than four digits."
+
+    # Calculate the length of the longest number.
+    upper_row = []
+    lower_row = []
+    line_row = []
+    solution_row = []
+
+    # Propose upper row.
+    for i in range_:
+        if len(upper[i]) > len(lower[i]):
+            upper_row.append(" "*2 + upper[i])
         else:
-            temp = len(lower[index])
-        print(temp)
-        for index in range(0, temp, 1):
-            print(" ", end = '')
-    print("test") 
+            upper_row.append(
+                " "*(len(lower[i]) - len(upper[i]) + 2) + upper[i])
 
+    # Propose lower row.
+    for i in range_:
+        if len(lower[i]) > len(upper[i]):
+            lower_row.append(operator[i] + " " + lower[i])
+        else:
+            lower_row.append(
+                operator[i] + " "*(len(upper[i]) - len(lower[i]) + 1) + lower[i])
 
-def error_handler(desription):
-    print(desription)
-    exit(1)
-    
+    # Propose line row.
+    for i in range_:
+        line_row.append("-"*(max(len(upper[i]), len(lower[i])) + 2))
+
+    # Propose solution row.
+    if showAnswer:
+        for i in range_:
+            if operator[i] == "+":
+                ans = str(int(upper[i]) + int(lower[i]))
+            else:
+                ans = str(int(upper[i]) - int(lower[i]))
+
+            if len(ans) > max(len(upper[i]), len(lower[i])):
+                solution_row.append(" " + ans)
+            else:
+                solution_row.append(
+                    " "*(max(len(upper[i]), len(lower[i])) - len(ans) + 2) + ans)
+        return ("    ".join(upper_row) + "\n" + "    ".join(lower_row) + "\n" + "    ".join(line_row) + "\n" + "    ".join(solution_row))
+    else:
+        return ("    ".join(upper_row) + "\n" + "    ".join(lower_row) + "\n" + "    ".join(line_row))

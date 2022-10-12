@@ -1,13 +1,9 @@
-import sys
-import arithmetic_arranger as arithmetics
-
-def main():
-    # Receive input from command line.
-    input = sys.argv[1:]
-    length = len(input)
-    
-    arithmetics.arithmetic_arranger(input)
+# This entrypoint file to be used in development. Start by reading README.md
+from arithmetic_arranger import arithmetic_arranger
+from unittest import main
 
 
-if __name__ == "__main__":
-    main()
+print(arithmetic_arranger(["32 + 698", "3801 - 2", "45 + 43", "123 + 49"]))
+
+# Run unit tests automatically
+main(module='test_module', exit=False)
